@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          var desc = Object.getOwnPropertyDescriptor(window, 'fetch');
+          if (desc && typeof desc.get === 'function' && !desc.set && desc.configurable) {
+            var origGet = desc.get;
+            var customFetch = null;
+            Object.defineProperty(window, 'fetch', {
+              configurable: true,
+              enumerable: Boolean(desc.enumerable),
+              get: function () {
+                return customFetch || origGet.call(this);
+              },
+              set: function (fn) {
+                if (typeof fn === 'function') {
+                  customFetch = fn;
+                }
+              },
+            });
+          }
+        } catch (_err) {}
+
+        function isExtensionSource(str) {
+          return (
+            typeof str === 'string' &&
+            (str.indexOf('chrome-extension://') !== -1 ||
+              str.indexOf('moz-extension://') !== -1 ||
+              str.indexOf('safari-extension://') !== -1)
+          );
+        }
+
+        window.addEventListener(
+          'error',
+          function (event) {
+            var stack = event && event.error && event.error.stack;
+            if (event && (isExtensionSource(event.filename) || isExtensionSource(stack))) {
+              event.preventDefault();
+              if (typeof event.stopImmediatePropagation === 'function') {
+                event.stopImmediatePropagation();
+              }
+            }
+          },
+          true
+        );
+
+        window.addEventListener(
+          'unhandledrejection',
+          function (event) {
+            var reason = event && event.reason;
+            var stack = reason && reason.stack;
+            if (isExtensionSource(stack)) {
+              event.preventDefault();
+              if (typeof event.stopImmediatePropagation === 'function') {
+                event.stopImmediatePropagation();
+              }
+            }
+          },
+          true
+        );
+      })();
+    </script>
+    <title>AI BUYER HUNTER — Global Lead Intelligence & Client Acquisition</title>
+    <meta name="description" content="Global AI-Powered Digital Services Lead Generation & Client Acquisition Platform." />
+    <meta property="og:title" content="AI BUYER HUNTER — Global Lead Intelligence & Client Acquisition" />
+    <meta property="og:description" content="Global AI-Powered Digital Services Lead Generation & Client Acquisition Platform." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-slate-50 text-slate-900 dark:bg-[#0B0F19] dark:text-slate-100 antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
